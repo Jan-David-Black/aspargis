@@ -14,7 +14,7 @@ const link = new WebSocketLink({
     reconnect: true,
     connectionParams: {
       headers: {
-        'x-hasura-admin-secret': "mylongsecretkey"
+        'x-hasura-admin-secret': process.env.REACT_APP_SECRET
       }
     }
   }

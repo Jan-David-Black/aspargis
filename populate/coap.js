@@ -9,7 +9,7 @@ server.on('request', function (req, res) {
       `http://localhost:8080/v1alpha1/graphql`,
       {
         method: 'POST',
-        headers: {"X-Hasura-Admin-Secret":"mylongsecretkey"},
+        headers: {"X-Hasura-Admin-Secret":process.env.SECRET},
         body: JSON.stringify({
           query: `
             mutation ($temp: numeric, $where: String) {
