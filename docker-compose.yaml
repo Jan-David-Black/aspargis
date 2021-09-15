@@ -4,7 +4,7 @@ services:
     image: timescale/timescaledb:latest-pg10
     restart: always
     environment:
-      POSTGRES_PASSWORD: "$POSTGRESSPWD"
+      POSTGRES_PASSWORD: $POSTGRESSPWD
     volumes:
     - db_data:/var/lib/postgresql/data
   graphql-engine:
@@ -15,8 +15,8 @@ services:
     - "timescale"
     restart: always
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@timescale:5432/postgres
-      HASURA_GRAPHQL_ACCESS_KEY: "$SECRET"
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:$POSTGRESSPWD@timescale:5432/postgres
+      HASURA_GRAPHQL_ACCESS_KEY: $SECRET
     command:
       - graphql-engine
       - serve
