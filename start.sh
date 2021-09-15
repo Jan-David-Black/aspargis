@@ -1,6 +1,9 @@
-docker kill $(docker ps -q)
-docker rm $(docker ps -a -q)
-docker-compose up -d
+if ! command -v "npm -v" &> /dev/null
+then
+    echo "npm could not be found testung to source .bashrc"
+    source ~/.bashrc
+fi
+
 
 if [ ! -d time-series-chart/node_modules ]; then
     cd time-series-chart

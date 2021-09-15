@@ -1,5 +1,11 @@
 #!/bin/bash 
 
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
+
 if [ ! -f .env ]; then
     echo "SECRET=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32})">.env
     echo "POSTGRESSPWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32})">>.env
@@ -7,8 +13,6 @@ if [ ! -f .env ]; then
     cp .env populate/
     cp .env time-series-chart/
     sed -i 's/SECRET/REACT_APP_SECRET/' time-series-chart/.env
-
-
 
     apt-get update
     apt-get install -y \
@@ -26,14 +30,17 @@ if [ ! -f .env ]; then
     apt-get update
     apt-get install -y docker-ce docker-ce-cli containerd.io
 
-    echo "granting docker privileges to $USER"
-    usermod -aG docker $USER
-    newgrp docker 
+    echo "granting docker privileges to $SUDO_USER"
+    usermod -aG docker $SUDO_USER
 
     curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     chmod +x /usr/local/bin/docker-compose
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-    nvm install node
+    
+    su $SUDO_USER -c"export NVM_DIR=\"\$HOME/.nvm\"
+        [ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\"
+        echo \$HOME
+        nvm install node"
 fi
 
 docker kill $(docker ps -q)
