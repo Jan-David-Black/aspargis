@@ -35,12 +35,25 @@ if [ ! -f .env ]; then
 
     curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     chmod +x /usr/local/bin/docker-compose
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
     
-    su $SUDO_USER -c"export NVM_DIR=\"\$HOME/.nvm\"
+    su $SUDO_USER -c"
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+        export NVM_DIR=\"\$HOME/.nvm\"
         [ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\"
         echo \$HOME
-        nvm install node"
+        nvm install node
+        if [ ! -d time-series-chart/node_modules ]; then
+            cd time-series-chart
+            npm install
+            cd ..
+        fi 
+
+        if [ ! -d populate/node_modules ]; then
+            cd populate
+            npm install
+            cd ..
+        fi 
+        "
 fi
 
 docker kill $(docker ps -q)
