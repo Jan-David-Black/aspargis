@@ -1,35 +1,34 @@
 import React, { Component } from 'react';
-import { Line } from 'react-chartjs-2';
-import { Subscription } from 'react-apollo';
 import gql from 'graphql-tag';
-import moment from 'moment';
+import { Query } from 'react-apollo';
+import SGroup from './SGroup.js';
 
-const TWENTY_MIN_TEMP_SUBSCRIPTION= gql`
-  subscription {
-    last_20_min_temp(
-      order_by: {
-        five_sec_interval: asc
+const GROUPS_OVERVIEW= gql`
+query Overview {
+  SGroups {
+    SGroup
+    Position
+    Spargelsorten {
+      Name
+    }
+    Sensors {
+      Correction_Sensorpositions {
+        pos
       }
-      where: {
-        location: {
-          _eq: "London"
-        }
+      Type
+      Sensor_Values(limit: 1, order_by: {Timestamp: desc}) {
+        Timestamp
+        Value
       }
-    ) {
-      five_sec_interval
-      location
-      max_temp
     }
   }
+}
 `
 
 class App extends Component {
   render() {
     return (
-      <div
-        style={{display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px'}}
-      >
-        <Subscription subscription={TWENTY_MIN_TEMP_SUBSCRIPTION}>
+        <Query query={GROUPS_OVERVIEW}>
           {
             ({data, error, loading}) => {
               if (error) {
@@ -39,35 +38,17 @@ class App extends Component {
               if (loading) {
                 return "Loading";
               }
-              let chartJSData = {
-                labels: [],
-                datasets: [{
-                  label: "Max temperature every five seconds",
-                  data: [],
-                  pointBackgroundColor: [],
-                  borderColor: 'brown',
-                  fill: false
-                }]
-              };
-              data.last_20_min_temp.forEach((item) => {
-                const humanReadableTime = moment(item.five_sec_interval).format('LTS');
-                chartJSData.labels.push(humanReadableTime);
-                chartJSData.datasets[0].data.push(item.max_temp);
-                chartJSData.datasets[0].pointBackgroundColor.push('brown');
-              })
+
+              console.log({data});
+              const overview = data.SGroups.map((group)=><SGroup key={group.SGroup} group={group}/>);
               return (
-                <Line
-                  data={chartJSData}
-                  options={{
-                    animation: {duration: 0},
-                    scales: { yAxes: [{ticks: { min: 5, max: 20 }}]}
-                  }}
-                />
+                <div className="overview-container">
+                  {overview}
+                </div>
               );
             }
           }
-        </Subscription>
-      </div>
+        </Query>
     );
   }
 }

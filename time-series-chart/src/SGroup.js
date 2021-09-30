@@ -1,0 +1,17 @@
+import React, { Component } from 'react';
+import Damm from './Damm';
+
+class SGroup extends Component {
+  render() {
+    var temps = [0,0,0,0];
+    this.props.group.Sensors.forEach((sensor) => {
+      temps[sensor.Correction_Sensorpositions[0]?.pos] = sensor.Sensor_Values[0].Value;
+    });
+
+    return (
+      <Damm temp={temps} pos={this.props.group.Position} type={this.props.group.Spargelsorten?.Name}/>
+    );
+  }
+}
+
+export default SGroup;
