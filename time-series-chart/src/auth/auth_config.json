@@ -1,0 +1,6 @@
+{
+    "domain":   "dev-leodorh9.us.auth0.com",
+    "clientId": "VPe92gUMGhq9WHnHljMB6p0OIN0pf2bA",
+    "audience": "https://aspargis.de",
+    "scope":    "read:current_user update:current_user_metadata",
+}

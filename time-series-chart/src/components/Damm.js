@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import { ReactComponent as Template } from './assets/damm.svg'
-import { ReactComponent as Thermometer } from './assets/thermometer.svg'
-import './assets/damm.css'
+import { ReactComponent as Template } from '../assets/damm.svg'
+import { ReactComponent as Thermometer } from '../assets/thermometer.svg'
+import '../assets/damm.css'
 class Damm extends Component {
     render() {
-        var temps = this.props.temp.map((temp, idx)=>{if(idx) return <p key={idx} className={"damm-elem damm-temp damm-temp"+idx}>{temp.toFixed(2)}°C</p>});
+        var temps = this.props.temp.map((temp, idx)=>{
+            if(idx){
+                return <p key={idx} className={"damm-elem damm-temp damm-temp"+idx}>{temp.toFixed(2)}°C</p>
+            }else{return null}
+        });
         return (
             <div className="damm-container">
                 <Template className="damm-elem damm-bg"/>

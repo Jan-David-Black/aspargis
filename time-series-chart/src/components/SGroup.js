@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Damm from './Damm';
 
 class SGroup extends Component {
@@ -9,7 +10,13 @@ class SGroup extends Component {
     });
 
     return (
-      <Damm temp={temps} pos={this.props.group.Position} type={this.props.group.Spargelsorten?.Name}/>
+      <Link to={`/details/${this.props.group.SGroup}`}>
+        <Damm 
+          temp={temps} 
+          pos={this.props.group.Position} 
+          type={this.props.group.Spargelsorten?.Name}
+        />
+      </Link>
     );
   }
 }

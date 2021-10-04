@@ -1,35 +1,33 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import { WebSocketLink } from 'apollo-link-ws';
-import { ApolloClient } from 'apollo-client';
-import { ApolloProvider } from 'react-apollo';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { Auth0Provider } from "@auth0/auth0-react";
+import AuthApolloProvider from './auth/AuthApolloProvider';
+import * as serviceWorkerRegistration from './util/serviceWorkerRegistration';
+import reportWebVitals from './util/reportWebVitals';
+import App from "./App";
+import Header from "./components/Header";
 
-// Create a WebSocket link:
-const link = new WebSocketLink({
-  uri: `ws://localhost:8080/v1alpha1/graphql`,
-  options: {
-    reconnect: true,
-    connectionParams: {
-      headers: {
-        'x-hasura-admin-secret': process.env.REACT_APP_SECRET
-      }
-    }
-  }
-})
-const cache = new InMemoryCache();
-const client = new ApolloClient({
-  link,
-  cache
-});
+import {BrowserRouter as Router} from "react-router-dom";
+
 
 ReactDOM.render(
   (
-    <ApolloProvider client={client}> 
-      <App />
-    </ApolloProvider>
+    <Auth0Provider
+      domain="dev-leodorh9.us.auth0.com"
+      clientId="VPe92gUMGhq9WHnHljMB6p0OIN0pf2bA"
+      redirectUri={window.location.origin}
+      audience="https://aspargis.de"
+      scope="read:current_user update:current_user_metadata"
+    >
+      <Router>
+        <Header/>
+        <AuthApolloProvider><App/></AuthApolloProvider>
+      </Router>
+    </Auth0Provider>
   ),
   document.getElementById('root')
 );
+
+serviceWorkerRegistration.register();
+reportWebVitals(console.log);

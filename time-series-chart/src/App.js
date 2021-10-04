@@ -1,54 +1,29 @@
 import React, { Component } from 'react';
-import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
-import SGroup from './SGroup.js';
+import Overview from './components/Overview';
+import Details from "./components/Details";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
 
-const GROUPS_OVERVIEW= gql`
-query Overview {
-  SGroups {
-    SGroup
-    Position
-    Spargelsorten {
-      Name
-    }
-    Sensors {
-      Correction_Sensorpositions {
-        pos
-      }
-      Type
-      Sensor_Values(limit: 1, order_by: {Timestamp: desc}) {
-        Timestamp
-        Value
-      }
-    }
-  }
-}
-`
+import Profile from './components/Profile';
+
 
 class App extends Component {
   render() {
     return (
-        <Query query={GROUPS_OVERVIEW}>
-          {
-            ({data, error, loading}) => {
-              if (error) {
-                console.error(error);
-                return "Error";
-              }
-              if (loading) {
-                return "Loading";
-              }
-
-              console.log({data});
-              const overview = data.SGroups.map((group)=><SGroup key={group.SGroup} group={group}/>);
-              return (
-                <div className="overview-container">
-                  {overview}
-                </div>
-              );
-            }
-          }
-        </Query>
+      <Switch>
+        <Route path="/details/:SGroupID">
+          <Details/>
+        </Route>
+        <Route path="/profile">
+          <Profile/>
+        </Route>
+        <Route path="/">
+          <Overview/>
+        </Route>
+      </Switch>
     );
   }
 }
