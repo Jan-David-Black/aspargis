@@ -1,0 +1,39 @@
+version: '2'
+services:
+  nginx:
+    image: nginx:latest
+    container_name: webserver
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl/:/ssl/
+      - ./aspargis/build/:/www/data
+  postgres:
+    image: postgres:12
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: $POSTGRESSPWD
+    volumes:
+    - db_data:/var/lib/postgresql/data
+  graphql-engine:
+    image: hasura/graphql-engine:v1.3.3
+    ports:
+    - "8080:8080"
+    depends_on:
+    - "postgres"
+    restart: always
+    expose:
+      - "8080"
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:$POSTGRESSPWD@postgres:5432/postgres
+      HASURA_GRAPHQL_ACCESS_KEY: $SECRET
+      HASURA_GRAPHQL_JWT_SECRET: '{"type": "RS512", "key": "-----BEGIN CERTIFICATE-----\nMIIDDTCCAfWgAwIBAgIJYjHDiyyFbjVuMA0GCSqGSIb3DQEBCwUAMCQxIjAgBgNV\nBAMTGWRldi1sZW9kb3JoOS51cy5hdXRoMC5jb20wHhcNMjExMDAxMDcxNzEzWhcN\nMzUwNjEwMDcxNzEzWjAkMSIwIAYDVQQDExlkZXYtbGVvZG9yaDkudXMuYXV0aDAu\nY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtHX5+f0K+HcWjb1D\n4kmHu0Wl5xTnAmbONNVeCFd7SUWE2n5x0NlFb8VCcpQsU5L6ka7wc39eoX89kO0W\nLsFYnfrSV7Zf1dstNaPvL0r7oamcQnNz6GQW7x4NxgU52ddXcqcML4vdUuy6Nyk0\nLD2HqRR9mAc9Ym8PzsbO0U3ShcdWI6ahguedXvcmPbBfl3Iwjs4dtUuDAoSPsrkq\nyEFkBnr+DKU2ho51hH4cCed+73b/lnrec9rvK9d2ST3pTfdQFUr/EJzprB1pxi4K\nHvwmoeX/NlYvgKXEUP+ZntG7kG+qQ3RZCHmgYHHSxEuvbL5SdEkS1PcwEMWGlXMW\nZeZ0MQIDAQABo0IwQDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTRuvpOPkN/\nB3J9xrxZnGXtMGf2RDAOBgNVHQ8BAf8EBAMCAoQwDQYJKoZIhvcNAQELBQADggEB\nAD0LjRrqA/TdlL3VRqFN0rVKSMfo3if39icQv0pz+re0EpH9eAEgt8r7TsDWvK+G\neLv2ogUtgmlhReStQk3ewW9v4vLEKifO8TNg83IHh4hM00bDS9Oztc+Mj4yDbF55\nil38B7EzAgs4Zhj/04BUoNjpAInJO9Yv9stYtGlq+EPPMtYPZgb+CrItD6ZCEeVh\nK8lztU3uIeSsCml/6jaCjG0rdnFqbRnapX00MTQkyHF+ymRjE0ZFj+MvD2eRMHZD\nrV7KlrWLIgcPJI+N23J2Bn3VGWfRWibnoPxa5upfnNO+04VrEDrH/KAd+0jdGTIi\nG66IRTdj7PZs+2fcIs/llQ4=\n-----END CERTIFICATE-----"}'
+    command:
+      - graphql-engine
+      - serve
+      - --enable-console
+volumes:
+  db_data:
