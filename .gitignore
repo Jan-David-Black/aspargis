@@ -2,7 +2,7 @@
 
 # dependencies
 node_modules
-ssl
+#ssl
 .vscode
 
 # testing
