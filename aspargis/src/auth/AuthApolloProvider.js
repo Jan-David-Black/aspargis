@@ -11,7 +11,7 @@ function AuthApolloProvider (props){
     const [client, setClient] = useState();
 
     const httpLink = createHttpLink({
-        uri: 'https://aspargis.de/v1alpha1/graphql',
+        uri: 'https://hasura.aspargis.de/v1alpha1/graphql',
     });
 
     useEffect(() => {
