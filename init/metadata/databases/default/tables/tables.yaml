@@ -1,0 +1,8 @@
+- "!include public_Correction_Sensorposition.yaml"
+- "!include public_SGroups.yaml"
+- "!include public_Sensor_Values.yaml"
+- "!include public_Sensors.yaml"
+- "!include public_Spargelsorten.yaml"
+- "!include public_TempKorrekturDaten.yaml"
+- "!include public_Users.yaml"
+- "!include public_daily.yaml"

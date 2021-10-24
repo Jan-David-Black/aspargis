@@ -1,0 +1,40 @@
+table:
+  name: Sensors
+  schema: public
+object_relationships:
+- name: sGroupBySgroup
+  using:
+    foreign_key_constraint_on: SGroup
+array_relationships:
+- name: Correction_Sensorpositions
+  using:
+    foreign_key_constraint_on:
+      column: SensorID
+      table:
+        name: Correction_Sensorposition
+        schema: public
+- name: Daily
+  using:
+    manual_configuration:
+      column_mapping:
+        SensorID: SensorID
+      insertion_order: null
+      remote_table:
+        name: daily
+        schema: public
+- name: Sensor_Values
+  using:
+    foreign_key_constraint_on:
+      column: SensorID
+      table:
+        name: Sensor_Values
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - Address
+    - SGroup
+    - SensorID
+    - Type
+    filter: {}
+  role: user

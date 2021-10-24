@@ -2,14 +2,13 @@
 
 # dependencies
 node_modules
-time-series-chart/.pnp
-.pnp.js
+ssl
 
 # testing
-time-series-chart/coverage
+aspargis/coverage
 
 # production
-time-series-chart/build
+aspargis/build
 
 # misc
 .DS_Store

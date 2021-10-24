@@ -101,11 +101,12 @@ server.on('request', function (req, res) {
     }
 
     console.log({Sensors});
+
     fetch(
-      `http://localhost:8080/v1alpha1/graphql`,
+      process.env.HASURA_API,
       {
         method: 'POST',
-        headers: {"X-Hasura-Admin-Secret":process.env.SECRET},
+        headers: {"X-Hasura-Admin-Secret":process.env.HASURA_GRAPHQL_ACCESS_KEY},
         body: JSON.stringify({
           query: mutation,
           variables: {
@@ -117,11 +118,15 @@ server.on('request', function (req, res) {
     ).then((resp) => resp.json().then((respObj) => {
       console.log("Hasura has responded:")
       console.log(JSON.stringify(respObj, null, 2));
-    }));
-    res.end("Transmission Success");
+      res.end("Transmission Success");
+    })).catch(function(e) {
+      console.log("transmission error:", e);
+      res.end("Transmission Error");
+    });    
 })
 
 // the default CoAP port is 5683
 server.listen(5683, function () {
+    console.log('v1.0.0')
     console.log('server started. PID:', process.pid)
 })

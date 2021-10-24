@@ -1,0 +1,44 @@
+table:
+  name: SGroups
+  schema: public
+object_relationships:
+- name: Spargelsorten
+  using:
+    foreign_key_constraint_on: Sorte
+- name: User
+  using:
+    foreign_key_constraint_on: Owner
+array_relationships:
+- name: Sensors
+  using:
+    foreign_key_constraint_on:
+      column: SGroup
+      table:
+        name: Sensors
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - Position
+    - SGroup
+    - Sorte
+    filter:
+      Owner:
+        _eq: X-Hasura-User-Id
+  role: user
+update_permissions:
+- permission:
+    check: {}
+    columns:
+    - Owner
+    - Position
+    - Sorte
+    filter:
+      _or:
+      - Owner:
+          _is_null: true
+      - Owner:
+          _eq: X-Hasura-User-Id
+    set:
+      Owner: x-hasura-User-Id
+  role: user

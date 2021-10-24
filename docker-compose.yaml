@@ -19,7 +19,11 @@ services:
     volumes:
     - db_data:/var/lib/postgresql/data
   graphql-engine:
-    image: fedormelexin/graphql-engine-arm64:latest
+#     image: fedormelexin/graphql-engine-arm64:latest
+    image: hasura/graphql-engine:latest.cli-migrations-v3
+    volumes:
+    - ./init/metadata:/hasura-metadata
+    - ./init/migrations:/hasura-migrations
     ports:
     - "8080:8080"
     depends_on:
@@ -34,6 +38,19 @@ services:
     command:
       - graphql-engine
       - serve
-      - --enable-console
+  populator:
+    build: ./populate/
+    ports:
+    - "5683:5683/udp"
+    depends_on:
+    - "graphql-engine"
+    restart: always
+    expose:
+      - "5683"
+    environment:
+      HASURA_API: http://graphql-engine:8080/v1alpha1/graphql
+      HASURA_GRAPHQL_ACCESS_KEY: $SECRET
+    
+
 volumes:
   db_data:

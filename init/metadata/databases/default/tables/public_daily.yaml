@@ -1,0 +1,13 @@
+table:
+  name: daily
+  schema: public
+select_permissions:
+- permission:
+    columns:
+    - SensorID
+    - date_trunc
+    - avg
+    - max
+    - min
+    filter: {}
+  role: user

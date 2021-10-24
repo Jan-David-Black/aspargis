@@ -1,0 +1,14 @@
+table:
+  name: Correction_Sensorposition
+  schema: public
+object_relationships:
+- name: Sensor
+  using:
+    foreign_key_constraint_on: SensorID
+select_permissions:
+- permission:
+    columns:
+    - SensorID
+    - pos
+    filter: {}
+  role: user
