@@ -39,7 +39,7 @@ services:
       - ./ssl/:/ssl/
       - ./aspargis/build/:/www/data
     depends_on:
-    - "graphql-engine"
+      - "graphql-engine"
   populator:
     build: ./populate/
     ports:
