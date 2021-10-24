@@ -9,7 +9,7 @@ ssl
 aspargis/coverage
 
 # production
-aspargis/build
+#aspargis/build
 
 # misc
 .DS_Store
