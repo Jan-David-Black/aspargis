@@ -27,9 +27,11 @@ services:
     command:
       - graphql-engine
       - serve
-   nginx:
+  nginx:
     image: nginx:latest
     container_name: webserver
+    depends_on:
+      - "graphql-engine"
     restart: unless-stopped
     ports:
       - 80:80
@@ -38,8 +40,6 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./ssl/:/ssl/
       - ./aspargis/build/:/www/data
-    depends_on:
-      - "graphql-engine"
   populator:
     build: ./populate/
     ports:
