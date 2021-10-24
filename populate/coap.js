@@ -1,7 +1,10 @@
-const coap = require('coap')
+#!/usr/bin/env node
+
+const coap = require('coap');
+const process = require('process');
 const dotenv = require('dotenv');
 dotenv.config();
-const server = coap.createServer()
+const server = coap.createServer({ type: 'udp6' })
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const mutation = `mutation InsertTempsFully ($SGroup: Int!, $Sensors: [Sensors_insert_input!]!){
@@ -17,28 +20,86 @@ const mutation = `mutation InsertTempsFully ($SGroup: Int!, $Sensors: [Sensors_i
   }
 }`
 
-const typeToNum = {"temp1":0, "temp2":1, "temp3":2, "temp4":3}
+function IsJsonString(str) {
+  try {
+      JSON.parse(str);
+  } catch (e) {
+      return false;
+  }
+  return true;
+}
+
 server.on('request', function (req, res) {
-    const payload = JSON.parse(req.payload.toString());
-    const SGroup = req.url.split("/")[2];
-    res.end("Transmission Success");
-    const addresses = payload.sensAddr ? payload.sensAddr : [];
-    const vals = payload.payload[0].Values;
-    let Sensors = [];
-    console.log(vals);
-    for(type in vals){
-      const sens = {
-        Address: addresses[typeToNum[type]], 
-        Type: type, 
-        Sensor_Values: {
-          data: {
-            Value: vals[type]
+    console.log("request received");
+    let payloadStr = req.payload.toString();
+
+    let SGroup, Sensors;
+
+    if(IsJsonString(payloadStr)){
+      console.log("Old request Format");
+      const payload = JSON.parse(payloadStr);
+      SGroup = req.url.split("/")[2];
+      const addresses = payload.sensAddr ? payload.sensAddr : [];
+      const vals = payload.payload[0].Values;
+      Sensors = [];
+      const typeToNum = {"temp1":0, "temp2":1, "temp3":2, "temp4":3};
+
+      console.log({vals, addresses});
+
+      for(type in vals){
+        const sens = {
+          Address: addresses[typeToNum[type]], 
+          Type: type, 
+          Sensor_Values: {
+            data: {
+              Value: vals[type]
+            }
           }
         }
+        Sensors.push(sens);
       }
-      console.log(sens);
-      Sensors.push(sens);
+    } else {
+      console.log("New request Format");
+      const slices={
+        dev : [4,12],
+        ver: [12,16],
+        bat: [16,20],
+        sig: [20,22],
+        mod: [22,24],
+        adc: [24,28],
+        temp1 : [28, 32],
+        temp2 : [32, 36],
+        temp3 : [36, 40],
+        temp4 : [40, 44],
+        time: [44,52]
+      }
+      let payload = {};
+      for (const prop in slices){
+        const slice = slices[prop];
+        payload[prop] = payloadStr.slice(slice[0], slice[1]);
+        if(prop!=="dev") payload[prop] = parseInt(Number("0x"+payload[prop]), 10)
+        if(prop.includes("temp")) payload[prop] = payload[prop] / 10
+      }
+      console.log({payload});
+  
+      Sensors = [];
+      //console.log(vals);
+      for(type in payload){
+        if(type in ['dev', 'time', 'ver', 'mod']) continue;
+        const sens = {
+          Type: type, 
+          Sensor_Values: {
+            data: {
+              Value: payload[type]
+            }
+          }
+        }
+        //console.log(sens);
+        Sensors.push(sens);
+      }
+      SGroup = Number(payload["dev"]);
     }
+
     console.log({Sensors});
     fetch(
       `http://localhost:8080/v1alpha1/graphql`,
@@ -54,11 +115,13 @@ server.on('request', function (req, res) {
         })
       }
     ).then((resp) => resp.json().then((respObj) => {
-        console.log(JSON.stringify(respObj, null, 2));
+      console.log("Hasura has responded:")
+      console.log(JSON.stringify(respObj, null, 2));
     }));
+    res.end("Transmission Success");
 })
 
 // the default CoAP port is 5683
-server.listen(function () {
-    console.log('server started')
+server.listen(5683, function () {
+    console.log('server started. PID:', process.pid)
 })
