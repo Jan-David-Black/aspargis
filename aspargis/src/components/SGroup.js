@@ -6,7 +6,9 @@ class SGroup extends Component {
   render() {
     var temps = [0,0,0,0];
     this.props.group.Sensors.forEach((sensor) => {
-      temps[sensor.Correction_Sensorpositions[0]?.pos] = sensor.Sensor_Values[0].Value;
+      let pos = sensor.Correction_Sensorpositions[0]?.pos
+      pos = pos ? pos : sensor.Type.charAt(4);
+      temps[pos] = sensor.Sensor_Values[0].Value;
     });
 
     return (
