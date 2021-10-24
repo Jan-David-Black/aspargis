@@ -4,6 +4,7 @@
 node_modules
 #ssl
 .vscode
+console/config.yaml
 
 # testing
 aspargis/coverage
