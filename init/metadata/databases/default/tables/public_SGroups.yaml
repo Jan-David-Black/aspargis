@@ -16,15 +16,28 @@ array_relationships:
       table:
         name: Sensors
         schema: public
+- name: shares
+  using:
+    foreign_key_constraint_on:
+      column: SGroup
+      table:
+        name: share
+        schema: public
 select_permissions:
 - permission:
     columns:
+    - Owner
     - Position
     - SGroup
     - Sorte
     filter:
-      Owner:
-        _eq: X-Hasura-User-Id
+      _or:
+      - Owner:
+          _eq: X-Hasura-User-Id
+      - shares:
+          userByUser:
+            user_id:
+              _eq: X-Hasura-User-Id
   role: user
 update_permissions:
 - permission:

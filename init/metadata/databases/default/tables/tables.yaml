@@ -6,3 +6,4 @@
 - "!include public_TempKorrekturDaten.yaml"
 - "!include public_Users.yaml"
 - "!include public_daily.yaml"
+- "!include public_share.yaml"

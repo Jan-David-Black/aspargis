@@ -2,6 +2,13 @@ table:
   name: Sensors
   schema: public
 object_relationships:
+- name: Correction_Sensorposition
+  using:
+    foreign_key_constraint_on:
+      column: SensorID
+      table:
+        name: Correction_Sensorposition
+        schema: public
 - name: sGroupBySgroup
   using:
     foreign_key_constraint_on: SGroup

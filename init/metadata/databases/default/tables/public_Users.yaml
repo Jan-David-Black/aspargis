@@ -9,3 +9,17 @@ array_relationships:
       table:
         name: SGroups
         schema: public
+- name: shares
+  using:
+    foreign_key_constraint_on:
+      column: User
+      table:
+        name: share
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - email
+    - user_id
+    filter: {}
+  role: user
