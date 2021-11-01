@@ -32,6 +32,7 @@ services:
     container_name: webserver
     depends_on:
       - "graphql-engine"
+      - "express"
     restart: unless-stopped
     ports:
       - 80:80
@@ -52,7 +53,13 @@ services:
     environment:
       HASURA_API: http://graphql-engine:8080/v1alpha1/graphql
       HASURA_GRAPHQL_ACCESS_KEY: $SECRET
-    
+  express:
+    build: ./react-backend/
+    ports:
+    - "3001:3001"
+    restart: always
+    expose:
+      - "3001"    
 
 volumes:
   db_data:

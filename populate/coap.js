@@ -4,7 +4,7 @@ const coap = require('coap');
 const process = require('process');
 const dotenv = require('dotenv');
 dotenv.config();
-const server = coap.createServer({ type: 'udp6' })
+const server = coap.createServer()
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const mutation = `mutation InsertTempsFully ($SGroup: Int!, $Sensors: [Sensors_insert_input!]!){
@@ -20,6 +20,17 @@ const mutation = `mutation InsertTempsFully ($SGroup: Int!, $Sensors: [Sensors_i
   }
 }`
 
+const query = `query readAlarms($SGroup: Int!) {
+  SGroups_by_pk(SGroup: $SGroup) {
+    Alarm
+    Owner
+    shares {
+      User
+      Alarm
+    }
+  }
+}`
+
 function IsJsonString(str) {
   try {
       JSON.parse(str);
@@ -29,22 +40,39 @@ function IsJsonString(str) {
   return true;
 }
 
-server.on('request', function (req, res) {
+server.on('request', async function (req, res) {
     console.log("request received");
     let payloadStr = req.payload.toString();
 
     let SGroup, Sensors;
 
     if(IsJsonString(payloadStr)){
-      console.log("Old request Format");
+      console.log("Old request format");
       const payload = JSON.parse(payloadStr);
       SGroup = req.url.split("/")[2];
+
+      let response = await fetch(
+        process.env.HASURA_API,
+        {
+          method: 'POST',
+          headers: {"X-Hasura-Admin-Secret":process.env.HASURA_GRAPHQL_ACCESS_KEY},
+          body: JSON.stringify({
+            query: query,
+            variables: {
+              SGroup: SGroup
+            }
+          })
+        }
+      )
+
+      console.log("alert query respone: ",response);
+
       const addresses = payload.sensAddr ? payload.sensAddr : [];
       const vals = payload.payload[0].Values;
       Sensors = [];
       const typeToNum = {"temp1":0, "temp2":1, "temp3":2, "temp4":3};
 
-      console.log({vals, addresses});
+      //console.log({vals, addresses});
 
       for(type in vals){
         const sens = {

@@ -5,12 +5,20 @@ import moment from 'moment';
 import 'chartjs-adapter-moment';
 import { useParams } from "react-router-dom";
 import { Tab, Tabs, Box } from '@mui/material';
+import { useAuth0 } from "@auth0/auth0-react";
+import ShareDialog from './ShareDialog';
 
 const PLOTABLE_DATA = gql`
 query PlotData($SGroup: Int!) {
   SGroups_by_pk(SGroup: $SGroup) {
     Position
     Sorte
+    Owner
+    shares {
+      userByUser {
+        email
+      }
+    }
     Sensors {
       Type
       Correction_Sensorpositions {
@@ -34,6 +42,7 @@ function Details(props) {
   let { SGroupID } = useParams();
   const { loading, error, data } = useQuery(PLOTABLE_DATA, { variables: { SGroup: SGroupID } });
   const [tab, setTab] = useState(0);
+  const { user } = useAuth0();
 
   const handleChange = (event, newValue) => {
     setTab(newValue);
@@ -49,10 +58,15 @@ function Details(props) {
     return "Loading";
   }
 
-  let sensors = data.SGroups_by_pk?.Sensors;
+  const sensors = data.SGroups_by_pk.Sensors;
+  const owner = data.SGroups_by_pk.Owner;
+  const owned = owner === user.sub;
+
+  const shares = data.SGroups_by_pk.shares.map((share)=>share.userByUser.email).join(", ")
 
   return (
     <Box sx={{ width: '100%' }}>
+      {owned ? <ShareDialog SGroupID={SGroupID}/> : "shared"}
       <Tabs value={tab} onChange={handleChange}>
         <Tab label="Averages" />
         <Tab label="Min-Max" />
@@ -71,6 +85,7 @@ function Details(props) {
         <TabPanel value={tab} index={3}>
           <BatPlot sensors={sensors}/>
         </TabPanel>
+        shared with: {shares}
     </Box>);
 }
 
@@ -153,7 +168,7 @@ function FullPlot(props) {
     labels: [],
     datasets: []
   };
-
+  console.log("sensors data: ", JSON.stringify(props.sensors));
   props.sensors.forEach((sensor, idx) => {
     const pos = sensor.Correction_Sensorpositions.pos ?? idx;
     let ds = {
