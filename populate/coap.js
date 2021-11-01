@@ -23,11 +23,16 @@ const mutation = `mutation InsertTempsFully ($SGroup: Int!, $Sensors: [Sensors_i
 const query = `query readAlarms($SGroup: Int!) {
   SGroups_by_pk(SGroup: $SGroup) {
     Alarm
-    Owner
     shares {
-      User
       Alarm
+      userByUser {
+        subscriptions
+      }
     }
+    User {
+      subscriptions
+    }
+    Position
   }
 }`
 
@@ -40,7 +45,7 @@ function IsJsonString(str) {
   return true;
 }
 
-server.on('request', async function (req, res) {
+server.on('request', async function (req, res) { //TODO add alarms to new format also
     console.log("request received");
     let payloadStr = req.payload.toString();
 
@@ -65,7 +70,19 @@ server.on('request', async function (req, res) {
         }
       )
 
+      response = await response.json();
+
       console.log("alert query respone: ",response);
+      const al_resp = response.data.SGroups_by_pk;
+      let alarms = []
+      if(al_resp.Alarm){
+        alarms.push({alarm: al_resp.Alarm, sub: al_resp.User.subscriptions, triggered:false})
+      }
+      al_resp.shares.forEach((share) => {
+        if(share.Alarm){
+          alarms.push({alarm: share.Alarm, sub: share.userByUser.subscriptions, triggered:false})
+        }
+      });
 
       const addresses = payload.sensAddr ? payload.sensAddr : [];
       const vals = payload.payload[0].Values;
@@ -85,7 +102,30 @@ server.on('request', async function (req, res) {
           }
         }
         Sensors.push(sens);
+        if(type.includes("temp")){
+          alarms.forEach((alarm)=>{
+            if(vals[type]>alarm.alarm){
+              alarm.triggered = true;
+            }
+          });
+        }
       }
+
+      console.log({alarms});
+      alarms.forEach((alarm)=>{
+        if(alarm.triggered && alarm.sub){
+          fetch(
+            process.env.PUSHER,
+            {
+              method: 'POST',
+              headers: {"content-type": "application/json"},
+              body: JSON.stringify({
+                sub: alarm.sub, name: al_resp.Position
+              })
+            }
+          ).then((resp)=>{console.log("resp: ", resp)}).catch((e)=>{console.log("error: ", e)})
+        }
+      });
     } else {
       console.log("New request Format");
       const slices={
