@@ -10,7 +10,6 @@
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read https://cra.link/PWA
 
-
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
     // [::1] is the IPv6 localhost address.
@@ -19,25 +18,8 @@ const isLocalhost = Boolean(
     window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
 );
 
-const publicVapidKey = 'BN1rZgnIUhURBJGNVVbLHUp2LMzfrKtPDfvP9QgNUzu1oBnFPLPLrOjKaNDry44Pzv0uD_YI4KAiqmQawoMHcr4';
-
-function urlBase64ToUint8Array(base64String) {
-    const padding = "=".repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding)
-      .replace(/\-/g, "+")
-      .replace(/_/g, "/");
-  
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-  
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i);
-    }
-    return outputArray;
-} 
-
-export function register(config) {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+export function register(config) { //process.env.NODE_ENV === 'production' && 
+  if ('serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
     if (publicUrl.origin !== window.location.origin) {
@@ -108,24 +90,6 @@ function registerValidSW(swUrl, config) {
           }
         };
       };
-
-
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        //public vapid key
-        applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
-      });
-
-      console.log("subscription: ", JSON.stringify(subscription));
-      //Send push notification
-      await fetch("/push/", {
-          method: "POST",
-          body: JSON.stringify(subscription),
-          headers: {
-              "content-type": "application/json"
-          }
-      });
-      console.log("request done")
 
     })
     .catch((error) => {

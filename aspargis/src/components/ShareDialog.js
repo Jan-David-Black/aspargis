@@ -25,7 +25,7 @@ function ShareDialog(props) {
   const [open, setOpen] = useState(false);
 
   const [shareSensor] = useMutation(SHARE_SENSOR);
-  const {loading, error, data} = useQuery(FIND_USER, {variables:{email:email}});
+  const {loading, data} = useQuery(FIND_USER, {variables:{email:email}});
 
   const handleClickOpen = () => {
     setOpen(true);

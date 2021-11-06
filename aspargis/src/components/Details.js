@@ -168,7 +168,6 @@ function FullPlot(props) {
     labels: [],
     datasets: []
   };
-  console.log("sensors data: ", JSON.stringify(props.sensors));
   props.sensors.forEach((sensor, idx) => {
     const pos = sensor.Correction_Sensorpositions.pos ?? idx;
     let ds = {

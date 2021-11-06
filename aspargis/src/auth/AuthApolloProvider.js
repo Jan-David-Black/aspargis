@@ -11,7 +11,7 @@ function AuthApolloProvider (props){
     const [client, setClient] = useState();
 
     const httpLink = createHttpLink({
-        uri: 'https://hasura.aspargis.de/v1/graphql',
+        uri: process.env.REACT_APP_HASURA_API,
     });
 
     useEffect(() => {
@@ -26,7 +26,7 @@ function AuthApolloProvider (props){
                 console.log("error fetching jwt:", e.message);
             }
         };
-        getToken();
+        getToken(); // eslint-disable-next-line
     }, []);
 
     useEffect(() => {
@@ -52,7 +52,7 @@ function AuthApolloProvider (props){
           link: authLink.concat(httpLink),
           cache: new InMemoryCache(),
         });
-        setClient(client);
+        setClient(client); // eslint-disable-next-line
       }, [accessToken]);
 
 
