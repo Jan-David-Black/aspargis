@@ -23,3 +23,12 @@ select_permissions:
     - user_id
     filter: {}
   role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - subscriptions
+    filter:
+      user_id:
+        _eq: X-Hasura-User-Id
+  role: user
