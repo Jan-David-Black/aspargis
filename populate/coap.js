@@ -120,7 +120,7 @@ server.on('request', async function (req, res) { //TODO add alarms to new format
               method: 'POST',
               headers: {"content-type": "application/json"},
               body: JSON.stringify({
-                sub: alarm.sub, name: al_resp.Position
+                sub: alarm.sub, name: al_resp.Position, id:SGroup
               })
             }
           ).then((resp)=>{console.log("resp: ", resp)}).catch((e)=>{console.log("error: ", e)})

@@ -17,7 +17,7 @@ router.post('/', function(req, res, next) {
   //create paylod: specified the detals of the push notification
   body.sub.forEach((sub)=>{
     console.log(sub);
-    const payload = JSON.stringify({title: body.name });
+    const payload = JSON.stringify({title: body.name, id:body.id});
     webpush.sendNotification(sub, payload)
       .then((resp)=>{console.log("Success:", resp); res.status(201).json({message:"success"});})
       .catch(err=> {console.error(err); res.status(201).json({err});});
