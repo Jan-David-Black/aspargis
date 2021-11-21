@@ -5,7 +5,6 @@ import {Button} from "@mui/material";
 
 const LogoutButton = () => {
   const { logout } = useAuth0();
-
   return (
     <Button color="inherit" onClick={() => logout({ returnTo: window.location.origin })}>
       Log Out

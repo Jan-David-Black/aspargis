@@ -3,6 +3,7 @@ import { useQuery, gql } from "@apollo/client";
 import SGroup from './SGroup.js';
 import '../assets/fab.css';
 import QrAddDialog from './QrAddDialog.js';
+import {LinearProgress} from "@mui/material";
 
 const GROUPS_OVERVIEW = gql`
 query Overview {
@@ -33,7 +34,7 @@ function Overview() {
     return "Error";
   }
   if (loading) {
-    return "Loading";
+    return <LinearProgress/>
   }
 
   console.log({ data });

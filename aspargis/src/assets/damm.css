@@ -1,10 +1,12 @@
 .damm-container{
     position: relative;
-    max-width: 400px;
-    max-height: 400px;
+    max-width: 300px;
+    max-height: 300px;
     width: 40vw;
     height: 40vw;
     box-shadow: 0px 0px 4px slategrey;
+    border-radius: 5%;
+    overflow: hidden;
     margin:1em;
 }
 
@@ -35,7 +37,7 @@
 
 .damm-label{
     left: 30%;
-    margin-top: 0;
+    margin-top: 1.5%;
     font-size: 2vw;
     line-height: 1;
 }
@@ -60,20 +62,20 @@
     font-size: 2vw;
 }
 
-@media screen and (min-width: 1000px) {
+@media screen and (min-width: 800px) {
     .damm-label{
-       font-size: 20px;
+       font-size: calc(20px*0.75);
     }
 
     .damm-temp{
-        font-size: 40px;
+        font-size: calc(40px*0.75);
     }
 
     .damm-name{
-        font-size: 30px;
+        font-size: calc(30px*0.75);
     }
 
     .damm-sub{
-        font-size: 20px;
+        font-size: calc(20px*0.75);
     }
 }

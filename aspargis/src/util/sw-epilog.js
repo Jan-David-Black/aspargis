@@ -1,3 +1,4 @@
+// leave it 
 self.addEventListener("push", e => {
     console.log(e)
     const data = e.data.json();

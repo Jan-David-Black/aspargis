@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import Overview from './components/Overview';
 import Details from "./components/Details";
+import Profile from './components/Profile';
 import {
   Switch,
   Route
 } from "react-router-dom";
-
-import Profile from './components/Profile';
 
 
 class App extends Component {

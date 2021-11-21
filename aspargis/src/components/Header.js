@@ -16,7 +16,7 @@ function Header() {
                         Aspargis
                     </Link>
                 </Typography>
-                {isLoading ? "Loading" : isAuthenticated ? <ProfileButton user={user}/> : <LoginButton />}
+                {isLoading ? null : isAuthenticated ? <ProfileButton user={user}/> : <LoginButton />}
             </Toolbar>
         </AppBar>
     );

@@ -2,11 +2,11 @@ import React , { useEffect, useState} from 'react';
 import { ApolloClient, createHttpLink, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { useAuth0 } from "@auth0/auth0-react";
-
+import {LinearProgress} from "@mui/material";
 
 
 function AuthApolloProvider (props){
-    const { isAuthenticated, getAccessTokenSilently, isLoading } = useAuth0();
+    const {isAuthenticated, getAccessTokenSilently, isLoading} = useAuth0();
     const [accessToken, setAccessToken] = useState();
     const [client, setClient] = useState();
 
@@ -55,9 +55,8 @@ function AuthApolloProvider (props){
         setClient(client); // eslint-disable-next-line
       }, [accessToken]);
 
-
     if (isLoading) {
-    return "Loading...";
+      return <LinearProgress/>;
     }
 
     if(isAuthenticated&&accessToken){

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, useMutation, gql } from "@apollo/client";
 import moment from 'moment';
 import 'chartjs-adapter-moment';
 import { useParams } from "react-router-dom";
-import { Tab, Tabs, Box } from '@mui/material';
+import { Tab, Tabs, Box, LinearProgress, TextField, Button } from '@mui/material';
 import { useAuth0 } from "@auth0/auth0-react";
 import ShareDialog from './ShareDialog';
 
@@ -14,10 +14,13 @@ query PlotData($SGroup: Int!) {
     Position
     Sorte
     Owner
+    Alarm
     shares {
+      User
       userByUser {
         email
       }
+      Alarm
     }
     Sensors {
       Type
@@ -55,23 +58,23 @@ function Details(props) {
     return "Error";
   }
   if (loading) {
-    return "Loading";
+    return <LinearProgress/>;
   }
 
   const sensors = data.SGroups_by_pk.Sensors;
   const owner = data.SGroups_by_pk.Owner;
   const owned = owner === user.sub;
 
-  const shares = data.SGroups_by_pk.shares.map((share)=>share.userByUser.email).join(", ")
+  const shares = data.SGroups_by_pk.shares.map((share)=>({email:share.userByUser.email, user:share.User}))
 
   return (
     <Box sx={{ width: '100%' }}>
-      {owned ? <ShareDialog SGroupID={SGroupID}/> : "shared"}
       <Tabs value={tab} onChange={handleChange}>
         <Tab label="Averages" />
         <Tab label="Min-Max" />
         <Tab label="Full" />
         <Tab label="Battery" />
+        <Tab label="Alarm" />
       </Tabs>
         <TabPanel value={tab} index={0}>
           <AvgPlot sensors={sensors} />
@@ -85,12 +88,76 @@ function Details(props) {
         <TabPanel value={tab} index={3}>
           <BatPlot sensors={sensors}/>
         </TabPanel>
-        shared with: {shares}
+        <TabPanel value={tab} index={4}>
+          <Alarm {...{owned, user, SGroupID}} alarm={
+            owned?
+              data.SGroups_by_pk.Alarm:
+              data.SGroups_by_pk.shares.find((share)=>share.User===user.sub).Alarm}/>
+        </TabPanel>
+        {owned ? 
+          <>
+            <ShareDialog SGroupID={SGroupID} shares={shares}/> 
+          </>
+        : "shared with you"}
     </Box>);
 }
 
 export default Details;
 
+const SET_OWNED_ALARM=gql`
+mutation setOwnedAlarm($SGroup: Int!, $Alarm: float8!) {
+  update_SGroups_by_pk(pk_columns: {SGroup: $SGroup}, _set: {Alarm: $Alarm}) {
+    Alarm
+  }
+}
+`
+
+const SET_SHARED_ALARM=gql`
+mutation setSharedAlarm($SGroup: Int!, $User: String!, $Alarm: float8!) {
+  update_share_by_pk(pk_columns: {SGroup: $SGroup, User: $User}, _set: {Alarm: $Alarm}) {
+    Alarm
+  }
+}
+
+`
+
+function Alarm(props){
+  const [alarm, setAlarm] = useState(props.alarm)
+  const [setOwnedAlarm] = useMutation(SET_OWNED_ALARM);
+  const [setSharedAlarm] = useMutation(SET_SHARED_ALARM);
+
+  const clear = () =>{
+    setAlarm("");
+    saveAlarm("");
+  }
+  const handleChange = (e) =>{
+    setAlarm(e.target.value)
+    saveAlarm(e.target.value)
+  }
+  const saveAlarm=(alarm)=>{
+    let toSave = alarm;
+    if(alarm==="") toSave=null;
+
+    if(props.owned){
+      setOwnedAlarm({variables:{SGroup:props.SGroupID, Alarm:toSave}})
+    }else{
+      setSharedAlarm({variables:{SGroup:props.SGroupID, Alarm:toSave, User:props.user.sub}})
+    }
+  }
+  return(
+      <>
+        <TextField
+          label="Temperature alarm"
+          type="number"
+          inputProps={{ min: "12", max: "30", step: ".1" }} 
+          InputLabelProps={{shrink: true}}
+          value = {alarm}
+          onChange = {handleChange}
+        />
+        <Button onClick={clear}>Clear</Button>
+      </>
+  )
+}
 
 function AvgPlot(props) {
   let chartJSData = {

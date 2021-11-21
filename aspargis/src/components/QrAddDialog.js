@@ -1,7 +1,6 @@
 import React from "react";
 import QrReader from 'react-web-qr-reader';
 import BottomRightFab from './BottomRightFab';
-import {Box} from "@mui/material";
 import { useMutation, gql } from "@apollo/client";
 
 const ACQUIRE_SENSOR = gql`
@@ -46,12 +45,12 @@ function QrAddDialog(props) {
 
   return (
     <BottomRightFab handleClickOpen={handleClickOpen} handleClose={handleClose} open={open}>
-      <Box display="flex" alignItems="center" justifyContent="center"><QrReader
+      <QrReader
         delay={delay}
         style={previewStyle}
         onError={handleError}
         onScan={handleScan}
-      /></Box>
+      />
     </BottomRightFab>
   );
 }

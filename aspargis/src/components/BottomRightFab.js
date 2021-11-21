@@ -1,5 +1,5 @@
 import React from "react";
-import {Fab, Slide, IconButton, Dialog} from "@mui/material";
+import {Fab, Slide, IconButton, Dialog, Grid, Box} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -19,10 +19,16 @@ export default function BottomRightFab(props) {
       </Fab>
 
       <Dialog fullScreen open={props.open} onClose={props.handleClose} TransitionComponent={Transition}>
-        <IconButton color="inherit" onClick={props.handleClose} aria-label="close">
-          <CloseIcon />
-        </IconButton>
-        {props.children}
+        <Grid container direction="row" justifyContent="center">
+          <Grid item>  
+            <IconButton color="inherit" onClick={props.handleClose} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
+        <Box display="flex" alignItems="center" justifyContent="center" m={4}>
+          {props.children}
+        </Box>
       </Dialog>
     </>
   );
