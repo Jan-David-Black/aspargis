@@ -26,6 +26,7 @@ array_relationships:
 select_permissions:
 - permission:
     columns:
+    - Alarm
     - Owner
     - Position
     - SGroup
@@ -43,6 +44,7 @@ update_permissions:
 - permission:
     check: {}
     columns:
+    - Alarm
     - Owner
     - Position
     - Sorte
