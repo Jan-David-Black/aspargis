@@ -1,1 +1,1 @@
-sudo certbot certonly --webroot -w ./aspargis/build/ -d aspargis.de -d www.aspargis.de -d hasura.aspargis.de
+sudo certbot certonly --webroot -w ./frontend/build/ -d aspargis.de -d www.aspargis.de -d hasura.aspargis.de
