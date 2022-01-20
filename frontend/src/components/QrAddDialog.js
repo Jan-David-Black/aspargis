@@ -23,7 +23,8 @@ function QrAddDialog(props) {
   const handleScan = (result) => {
     console.log("Found",{result});
     if(!isNaN(result.data)){
-      acquireSensor({variables: {SGroupID: result.data}});
+      const res=result.data;
+      acquireSensor({variables: {SGroupID: res.substring(res.length-6)}});
     }else{
       console.error("Non numeric values are invalid");
     }

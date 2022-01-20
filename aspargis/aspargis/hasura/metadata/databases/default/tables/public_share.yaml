@@ -1,0 +1,49 @@
+table:
+  name: share
+  schema: public
+object_relationships:
+- name: sGroupBySgroup
+  using:
+    foreign_key_constraint_on: SGroup
+- name: userByUser
+  using:
+    foreign_key_constraint_on: User
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      sGroupBySgroup:
+        Owner:
+          _eq: X-Hasura-User-Id
+    columns:
+    - SGroup
+    - User
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - Alarm
+    - SGroup
+    - User
+    filter: {}
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - Alarm
+    filter:
+      sGroupBySgroup:
+        Owner:
+          _eq: X-Hasura-User-Id
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _or:
+      - sGroupBySgroup:
+          Owner:
+            _eq: X-Hasura-User-Id
+      - User:
+          _eq: X-Hasura-User-Id
+  role: user

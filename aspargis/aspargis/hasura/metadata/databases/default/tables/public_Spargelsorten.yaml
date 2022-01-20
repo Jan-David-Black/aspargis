@@ -1,0 +1,18 @@
+table:
+  name: Spargelsorten
+  schema: public
+array_relationships:
+- name: SGroups
+  using:
+    foreign_key_constraint_on:
+      column: Sorte
+      table:
+        name: SGroups
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - Name
+    - SorteID
+    filter: {}
+  role: user

@@ -1,0 +1,23 @@
+table:
+  name: TempKorrekturDaten
+  schema: public
+object_relationships:
+- name: TempKorrekturDaten
+  using:
+    foreign_key_constraint_on: Address
+array_relationships:
+- name: TempKorrekturDatens
+  using:
+    foreign_key_constraint_on:
+      column: Address
+      table:
+        name: TempKorrekturDaten
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - Address
+    - Korrektur_0
+    - Korrektur_100
+    filter: {}
+  role: user

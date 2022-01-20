@@ -1,0 +1,7 @@
+version: 3
+endpoint: https://hasura.aspargis.de
+metadata_directory: metadata
+admin_secret: a625tX2tXRPPuEwZjnXHW727yc2i247B
+actions:
+  kind: synchronous
+  handler_webhook_baseurl: http://localhost:3000
