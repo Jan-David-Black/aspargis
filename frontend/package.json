@@ -43,7 +43,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && npm run-script sw-epilog",
+    "build": "REACT_APP_HASURA_API=https://hasura.aspargis.de/v1alpha1/graphql react-scripts build && npm run-script sw-epilog",
     "sw-epilog": "cat src/util/sw-epilog.js >> build/service-worker.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
