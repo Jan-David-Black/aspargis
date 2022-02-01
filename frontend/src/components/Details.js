@@ -48,8 +48,8 @@ query PlotData($SGroup: Int!) {
 
 const zoomOptions = {
   limits: {
-    x: {min: 'original', max: 'original', minRange: 50},
-    y: {min: 'original', max: 'original', minRange: 50}
+    x: {min: 'original', max: 'original', minRange: 86400},
+    y: {min: 'original', max: 'original', minRange: 10}
   },
   pan: {
     enabled: true,
@@ -96,7 +96,7 @@ function Details(props) {
   const shares = data.SGroups_by_pk.shares.map((share)=>({email:share.userByUser.email, user:share.User}))
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', minHeight: "80vh" }}>
       <Tabs value={tab} onChange={handleChange}>
         <Tab label="Averages" />
         <Tab label="Min-Max" />
@@ -202,9 +202,10 @@ function AvgPlot(props) {
     datasets: []
   };
 
+  let count = 0
   props.sensors.forEach((sensor, idx) => {
-    if (sensor.Type === "v_bat") return;
-    const pos = sensor.Correction_Sensorpositions.pos ?? idx;
+    if (["sig", "dev", "ver", "mod", "adc", "bat", "time"].includes(sensor.Type)) return;
+    const pos = sensor.Correction_Sensorpositions.pos ?? count;
     let ds = {
       label: "temp" + pos,
       data: [],
@@ -212,16 +213,18 @@ function AvgPlot(props) {
     };
     sensor.Daily.forEach((item) => {
       const humanReadableTime = moment(item.date_trunc);
-      if (!idx) chartJSData.labels.push(humanReadableTime);
+      if (!count) chartJSData.labels.push(humanReadableTime);
       ds.data.push(item.max);
     })
     chartJSData.datasets.push(ds);
+    count = count +1 
   });
 
   return (
     <Line
       data={chartJSData}
       options={{
+        maintainAspectRatio: false,
         normalized: true,
         elements: { point: { radius: 0 } },
         scales: {
@@ -261,6 +264,7 @@ function BatPlot(props) {
       data={chartJSData}
       options={{
         normalized: true,
+        maintainAspectRatio: false,
         elements: { point: { radius: 0 } },
         scales: {
           x: { type: 'time' },
@@ -276,8 +280,10 @@ function FullPlot(props) {
     labels: [],
     datasets: []
   };
+  let count = 0
   props.sensors.forEach((sensor, idx) => {
-    const pos = sensor.Correction_Sensorpositions.pos ?? idx;
+    if (["sig", "dev", "ver", "mod", "adc", "bat", "time"].includes(sensor.Type)) return;
+    const pos = sensor.Correction_Sensorpositions.pos ?? count;
     let ds = {
       label: "temp" + pos,
       data: [],
@@ -286,10 +292,11 @@ function FullPlot(props) {
     if (sensor.Type === "v_bat") return;
     sensor.Sensor_Values.forEach((item) => {
       const humanReadableTime = moment(item.Timestamp);
-      if (!idx) chartJSData.labels.push(humanReadableTime);
+      if (!count) chartJSData.labels.push(humanReadableTime);
       ds.data.push(item.Value);
     })
     chartJSData.datasets.push(ds);
+    count = count +1 
   });
 
   return (
@@ -297,6 +304,7 @@ function FullPlot(props) {
       data={chartJSData}
       options={{
         normalized: true,
+        maintainAspectRatio: false,
         elements: { point: { radius: 0 } },
         scales: {
           x: { type: 'time' },
@@ -324,7 +332,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '20px', height: '60vh' }}>
           {children}
         </div>
       )}
