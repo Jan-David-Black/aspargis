@@ -16,7 +16,7 @@ function AuthApolloProvider (props){
 
     useEffect(() => {
         const getToken = async () => { 
-            await new Promise(resolve => setTimeout(resolve, 6000))
+            await new Promise(resolve => setTimeout(resolve, 1000))
             try {
                 const aT = await getAccessTokenSilently({
                     audience: `https://aspargis.de`,
