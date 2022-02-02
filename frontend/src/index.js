@@ -20,6 +20,7 @@ ReactDOM.render(
       audience="https://aspargis.de"
       scope="read:current_user update:current_user_metadata"
       cacheLocation="localstorage"
+      useRefreshTokens={true}
     >
       <Router>
         <Header/>

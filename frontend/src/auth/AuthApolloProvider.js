@@ -19,7 +19,7 @@ function AuthApolloProvider (props){
             try {
                 const aT = await getAccessTokenSilently({
                     audience: `https://aspargis.de`,
-                    scope: "read:current_user",
+                    scope: "read:current_user update:current_user_metadata"
                 });
                 setAccessToken(aT);
             } catch (e) {
@@ -28,7 +28,7 @@ function AuthApolloProvider (props){
                 try {
                   const aT = await getAccessTokenSilently({
                     audience: `https://aspargis.de`,
-                    scope: "read:current_user",
+                    scope: "read:current_user update:current_user_metadata",
                   });
                   setAccessToken(aT);
                 } catch (e) {
