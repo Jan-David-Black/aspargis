@@ -24,7 +24,7 @@ function AuthApolloProvider (props){
                 setAccessToken(aT);
             } catch (e) {
                 console.log("error fetching jwt:", e.message);
-                await new Promise(resolve => setTimeout(resolve, 500))
+                await new Promise(resolve => setTimeout(resolve, 2000))
                 try {
                   const aT = await getAccessTokenSilently({
                     audience: `https://aspargis.de`,
