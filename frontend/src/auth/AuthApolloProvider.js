@@ -27,7 +27,7 @@ function AuthApolloProvider (props){
             }
         };
         getToken(); // eslint-disable-next-line
-    }, []);
+    }, [isAuthenticated]);
 
     useEffect(() => {
         const authLink = setContext((_, { headers }) => {
