@@ -23,6 +23,12 @@ function AuthApolloProvider (props){
                 });
                 setAccessToken(aT);
             } catch (e) {
+                await new Promise(resolve => setTimeout(resolve, 500))
+                const aT = await getAccessTokenSilently({
+                  audience: `https://aspargis.de`,
+                  scope: "read:current_user",
+                });
+                setAccessToken(aT);
                 console.log("error fetching jwt:", e.message);
             }
         };
