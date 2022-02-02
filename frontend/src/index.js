@@ -19,6 +19,7 @@ ReactDOM.render(
       redirectUri={window.location.origin}
       audience="https://aspargis.de"
       scope="read:current_user update:current_user_metadata"
+      cacheLocation="localstorage"
     >
       <Router>
         <Header/>
