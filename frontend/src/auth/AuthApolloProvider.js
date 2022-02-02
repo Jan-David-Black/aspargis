@@ -15,7 +15,8 @@ function AuthApolloProvider (props){
     });
 
     useEffect(() => {
-        const getToken = async () => {  
+        const getToken = async () => { 
+            await new Promise(resolve => setTimeout(resolve, 6000))
             try {
                 const aT = await getAccessTokenSilently({
                     audience: `https://aspargis.de`,
@@ -24,20 +25,10 @@ function AuthApolloProvider (props){
                 setAccessToken(aT);
             } catch (e) {
                 console.log("error fetching jwt:", e.message);
-                await new Promise(resolve => setTimeout(resolve, 2000))
-                try {
-                  const aT = await getAccessTokenSilently({
-                    audience: `https://aspargis.de`,
-                    scope: "read:current_user update:current_user_metadata",
-                  });
-                  setAccessToken(aT);
-                } catch (e) {
-                  console.log("failed again");
-                }
             }
         };
         getToken(); // eslint-disable-next-line
-    }, [isAuthenticated]);
+    }, []);
 
     useEffect(() => {
         const authLink = setContext((_, { headers }) => {
