@@ -9,6 +9,7 @@ function AuthApolloProvider (props){
     const {isAuthenticated, getAccessTokenSilently, isLoading} = useAuth0();
     const [accessToken, setAccessToken] = useState();
     const [client, setClient] = useState();
+    const [waiting, setWaiting] = useState(false);
 
     const httpLink = createHttpLink({
         uri: process.env.REACT_APP_HASURA_API,
@@ -16,7 +17,9 @@ function AuthApolloProvider (props){
 
     useEffect(() => {
         const getToken = async () => { 
+            setWaiting(true);
             await new Promise(resolve => setTimeout(resolve, 1000))
+            setWaiting(false);
             try {
                 const aT = await getAccessTokenSilently({
                     audience: `https://aspargis.de`,
@@ -56,7 +59,7 @@ function AuthApolloProvider (props){
         setClient(client); // eslint-disable-next-line
       }, [accessToken]);
 
-    if (isLoading) {
+    if (waiting || isLoading) {
       return <LinearProgress/>;
     }
 
