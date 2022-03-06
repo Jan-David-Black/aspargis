@@ -30,14 +30,10 @@ select_permissions:
 update_permissions:
 - permission:
     check: null
-    columns:
-    - Alarm
+    columns: []
     filter:
-      _or:
-      - sGroupBySgroup:
-          Owner:
-            _eq: X-Hasura-User-Id
-      - User:
+      sGroupBySgroup:
+        Owner:
           _eq: X-Hasura-User-Id
   role: user
 delete_permissions:

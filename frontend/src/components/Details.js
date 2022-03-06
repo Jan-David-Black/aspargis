@@ -37,7 +37,7 @@ query PlotData($SGroup: Int!) {
         max
         date_trunc
       }
-      Sensor_Values{
+      Sensor_Values(order_by: {Timestamp: asc}) {
         Timestamp
         Value
       }
