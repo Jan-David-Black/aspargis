@@ -19,6 +19,9 @@ query PlotData($SGroup: Int!) {
     Position
     Sorte
     Owner
+    User {
+      email
+    }
     Alarm
     shares {
       User
@@ -126,7 +129,9 @@ function Details(props) {
           <>
             <ShareDialog SGroupID={SGroupID} shares={shares}/> 
           </>
-        : "shared with you"}
+        : <Box display="flex"
+          justifyContent="center"
+          alignItems="center"> {"shared with you by " + data.SGroups_by_pk.User.email} </Box>}
     </Box>);
 }
 
